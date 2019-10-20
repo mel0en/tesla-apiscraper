@@ -33,11 +33,23 @@ touch apiscraper.log
 # sudo chown 472 data/grafana
 
 # Install docker/docker-compose if not exists
-if ! hash docker 2>/dev/null; then
+if ! which docker >/dev/null; then
   curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
 fi
-if ! hash docker-compose 2>/dev/null; then
-  apt-get install docker-compose
+
+if ! which docker-compose >/dev/null; then
+  sudo apt-get install docker-compose
+fi
+
+# Check if we have docker permissions
+if [ "$EUID" -ne 0 ] && ! (groups | grep &>/dev/null '\bdocker\b'); then
+    echo "Run this script as a user with docker rights"
+    echo "Or add this user to the docker group:"
+    echo
+    echo "  sudo usermod -aG docker $(id -u -n)"
+    echo
+    echo "Then re-login"
+    exit
 fi
 
 # Start Docker Stack
@@ -45,10 +57,10 @@ fi
 docker-compose up -d
 
 # Make the scraper start start on boot
-cp tesla-apiscraper.service /lib/systemd/system
+sudo cp tesla-apiscraper.service /lib/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable tesla-apiscraper.service
 
 # Add pi or any other user you would like to the Docker Group
-usermod -aG docker $(id -u -n)
+# usermod -aG docker $(id -u -n)
 # reboot
