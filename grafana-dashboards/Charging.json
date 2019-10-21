@@ -285,7 +285,7 @@
           "tags": [
             {
               "key": "display_name",
-              "operator": "=",
+              "operator": "=~",
               "value": "/^$vehicle_name$/"
             }
           ]
