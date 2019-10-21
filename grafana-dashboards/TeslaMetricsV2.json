@@ -2473,8 +2473,8 @@
           "tags": [
             {
               "key": "display_name",
-              "operator": "=",
-              "value": "Ulysses"
+              "operator": "=~",
+              "value": "/^$vehicle_name$/"
             }
           ]
         }
